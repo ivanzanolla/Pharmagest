@@ -4,6 +4,7 @@ using Pharmagest.WPF.Company.Command;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 
 namespace Pharmagest.WPF.Company.ViewModel
 {
@@ -89,6 +90,11 @@ namespace Pharmagest.WPF.Company.ViewModel
                     Name = region.DisplayName
                 });
             }
+
+
+            countries.Add(new CountryViewModel { CountryCode = "EL", Name = "Greece" });
+
+            countries = countries.OrderBy(c => c.Name).ToList();
 
             return countries;
         }
