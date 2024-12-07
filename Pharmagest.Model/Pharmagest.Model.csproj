@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BB395D73-3BBA-4A82-9B59-9903AC1F9682}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pharmagest.Model</RootNamespace>
+    <AssemblyName>Pharmagest.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Company\CompanyService.cs" />
+    <Compile Include="Company\GetCompanyChainOfResponsability\CompanyHandler.cs" />
+    <Compile Include="Company\GetCompanyChainOfResponsability\InsertCompanyInDatabaseHandler.cs" />
+    <Compile Include="Company\GetCompanyChainOfResponsability\UpdateCompanyInDatabaseHandler.cs" />
+    <Compile Include="Mapping\CompanyMapping.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Pharmagest.Dto\Pharmagest.Dto.csproj">
+      <Project>{A1D80C50-2975-4629-BBE2-EF4F722C23AB}</Project>
+      <Name>Pharmagest.Dto</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pharmagest.Entity\Pharmagest.Entity.csproj">
+      <Project>{553eff9c-1479-4e3e-9e7f-5c09118b2a47}</Project>
+      <Name>Pharmagest.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pharmagest.Interface\Pharmagest.Interface.csproj">
+      <Project>{3F35EAFC-43C5-45BC-9BCE-06481746B736}</Project>
+      <Name>Pharmagest.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pharmagest.Message\Pharmagest.Message.csproj">
+      <Project>{16DEEFAF-AA33-4753-A254-193409B92365}</Project>
+      <Name>Pharmagest.Message</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

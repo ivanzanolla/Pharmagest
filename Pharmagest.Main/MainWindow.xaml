@@ -1,0 +1,21 @@
+﻿<Window x:Class="Pharmagest.Main.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Pharmagest.Main"
+        xmlns:viewModel="clr-namespace:Pharmagest.WPF.Company.ViewModel;assembly=Pharmagest.WPF" 
+        xmlns:view="clr-namespace:Pharmagest.WPF.Company.View;assembly=Pharmagest.WPF" 
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModel:UserControlViewModel}">
+            <view:UserControlVatCompany/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <ContentControl Content="{Binding Path=CurrentView}"/>
+    </Grid>
+</Window>
