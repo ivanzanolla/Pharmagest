@@ -27,6 +27,11 @@ namespace Pharmagest.WebClient.Rest
 
         public override CompanyDto GetCompany(RequestVatDto requestVatDto)
         {
+            if (requestVatDto.CountryCode == null)
+                throw new ArgumentNullException(nameof(requestVatDto.CountryCode));
+            if (requestVatDto.Vat == null)
+                throw new ArgumentNullException(nameof(requestVatDto.Vat));
+
             var vatNumberRequest = new VatNumberRequest
             {
                 CountryCode = requestVatDto.CountryCode,

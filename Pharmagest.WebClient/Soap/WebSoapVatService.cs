@@ -1,5 +1,4 @@
 ﻿using Pharmagest.Dto.Company;
-using Pharmagest.WebClient.Rest;
 using System;
 using System.ServiceModel;
 
@@ -23,24 +22,35 @@ namespace Pharmagest.WebClient.Soap
             var countryCode = requestVatDto.CountryCode;
             var vatNumber = requestVatDto.Vat;
 
-            var requestDateString = client.checkVat(ref countryCode, ref vatNumber, out bool valid, out string name, out string address);
-
-            if (!valid)
+            try
             {
+                var requestDateString = client.checkVat(ref countryCode, ref vatNumber, out bool valid, out string name, out string address);
+
+                if (!valid)
+                {
+                    return null;
+                }
+                var requestTime = DateTime.Parse(requestDateString);
+
+                if (valid)
+                {
+                    return new CompanyDto
+                    {
+                        Address = address,
+                        CountryCode = countryCode,
+                        Vat = vatNumber,
+                        Name = name,
+                        RequestTime = requestTime,
+                    };
+                }
+            }
+            catch (Exception)
+            {
+
                 return null;
             }
-            var requestTime = DateTime.Parse(requestDateString);
-            if (valid)
-            {
-                return new CompanyDto
-                {
-                    Address = address,
-                    CountryCode = countryCode,
-                    Vat = vatNumber,
-                    Name = name,
-                    RequestTime = requestTime,
-                };
-            }
+
+
 
             return null;
 
