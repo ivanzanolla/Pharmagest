@@ -7,7 +7,7 @@
         xmlns:viewModel="clr-namespace:Pharmagest.WPF.Company.ViewModel;assembly=Pharmagest.WPF" 
         xmlns:view="clr-namespace:Pharmagest.WPF.Company.View;assembly=Pharmagest.WPF" 
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="{Binding Path=Header}" Height="450" Width="800">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModel:UserControlViewModel}">

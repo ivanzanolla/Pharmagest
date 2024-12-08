@@ -3,8 +3,6 @@ using Pharmagest.Interface.ObserverManager;
 using Pharmagest.Interface.WebClient;
 using Pharmagest.Message.Company;
 using Pharmagest.WPF.Company.Command;
-using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

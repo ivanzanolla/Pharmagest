@@ -1,12 +1,4 @@
 ﻿using Pharmagest.WPF;
-using Pharmagest.WPF.Company.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Pharmagest.Main
 {
@@ -14,6 +6,7 @@ namespace Pharmagest.Main
     {
 
         private UC _currentView;
+        private string _header;
 
         public MainWindowViewModel(UC currentView)
         {
@@ -33,6 +26,21 @@ namespace Pharmagest.Main
                 }
             }
         }
+
+
+        public string Header
+        {
+            get { return _header; }
+            set
+            {
+                if (value != _header)
+                {
+                    _header = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
     }
 }

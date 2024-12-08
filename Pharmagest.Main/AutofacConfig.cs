@@ -12,7 +12,6 @@ using Pharmagest.WebClient;
 using Pharmagest.Interface.WebClient;
 using Pharmagest.Interface.ObserverManager;
 using Pharmagest.Observer;
-using System;
 
 namespace Pharmagest.Main
 {
@@ -27,7 +26,7 @@ namespace Pharmagest.Main
             builder.RegisterType<ObserverService>().As<IObserverService>().SingleInstance();
             builder.RegisterType<CompanyService>().As<ICompanyService>().SingleInstance();
 
-            // faccio istanziare i servizi
+            // faccio istanziare i servizi che devono sempre rimanere attivi
             builder.RegisterBuildCallback(c =>
             {
                 c.Resolve<IObserverService>();
@@ -57,7 +56,9 @@ namespace Pharmagest.Main
             builder.Register(ctx =>
             {
                 var configService = ctx.Resolve<UserControlViewModel>();
-                return new MainWindowViewModel<UserControlViewModel>(configService);
+                var mainWindowViewModel = new MainWindowViewModel<UserControlViewModel>(configService);
+                mainWindowViewModel.Header = "Check vat";
+                return mainWindowViewModel;
             }).AsSelf();
 
 
