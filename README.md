@@ -18,7 +18,7 @@ The solution is divided into several layers and modules focusing on maintainabil
   Defines the database entities, representing the physical database tables.
 
 - **Pharmagest.Interface**  
-  Hosts all interfaces for Inversion of Control (IoC) and Dependency Injection (DI).
+  Hosts all interfaces for Inversion of Control (IoC) by Autofac.
 
 - **Pharmagest.Message**  
   Includes messages that can be published or subscribed (see `Pharmagest.ObserverManager`).
@@ -30,7 +30,7 @@ The solution is divided into several layers and modules focusing on maintainabil
   Implements the Observer pattern. Since compatible NuGet packages were unavailable, I used a custom implementation I had developed in the past as a personal exercise.
 
 - **Pharmagest.WebClient**  
-  Provides web service integrations (SOAP or REST). I noticied REST didn't work at all testing by myself with Swagger
+  Provides web service integrations (SOAP or REST) in async way.
 
 - **Pharmagest.WPF**  
   Contains the views and view models, with dependencies injected from the model layer via DI.
