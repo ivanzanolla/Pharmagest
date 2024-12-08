@@ -1,9 +1,9 @@
 ﻿using Pharmagest.Dto.Company;
 using Pharmagest.Message.Company;
+using Pharmagest.WPF.Company.Extension;
 using Pharmagest.WPF.Company.ViewModel;
 using System;
 using System.ComponentModel;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 
@@ -48,25 +48,14 @@ namespace Pharmagest.WPF.Company.Command
 
             var responseVatDto = await _viewModel.WebClientContext.ExecuteStrategyAsync(strategy, requestDto);
 
-
             if (!responseVatDto.IsValid)
             {
-                _viewModel.SelectedCompany.RequestTime = responseVatDto.ErrorMessage;
-                _viewModel.SelectedCompany.Vat = responseVatDto.ErrorMessage;
-                _viewModel.SelectedCompany.Name = responseVatDto.ErrorMessage;
-                _viewModel.SelectedCompany.CountryCode = responseVatDto.ErrorMessage;
-                _viewModel.SelectedCompany.Address = responseVatDto.ErrorMessage;
+                _viewModel.SelectedCompany.SetError(responseVatDto.ErrorMessage);
                 _viewModel.IsBusy = false;
                 return;
             }
 
-            var companyDto = responseVatDto.Company;
-
-            _viewModel.SelectedCompany.RequestTime = companyDto.RequestTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-            _viewModel.SelectedCompany.Vat = companyDto.Vat;
-            _viewModel.SelectedCompany.Name = companyDto.Name;
-            _viewModel.SelectedCompany.CountryCode = companyDto.CountryCode;
-            _viewModel.SelectedCompany.Address = companyDto.Address;
+            _viewModel.SelectedCompany.ToUpdate(responseVatDto.Company);
 
             var syncCompanyDbMessage = new SyncCompanyDbRequest { Dto = responseVatDto.Company };
 
