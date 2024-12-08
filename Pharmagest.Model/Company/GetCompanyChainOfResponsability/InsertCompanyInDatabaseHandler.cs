@@ -1,6 +1,7 @@
 ﻿using Pharmagest.Dto.Company;
 using Pharmagest.Interface.Database.Dao;
 using Pharmagest.Model.Mapping;
+using System;
 
 namespace Pharmagest.Model.Company.GetCompanyChainOfResponsability
 {
@@ -13,19 +14,17 @@ namespace Pharmagest.Model.Company.GetCompanyChainOfResponsability
             _companyDao = companyDao;
         }
 
-        public override CompanyDto Handle(CompanyDto companyDto)
+        public override Tuple<CompanyDto, bool> Handle(CompanyDto companyDto)
         {
-
             if (companyDto == null)
             {
                 return null;
             }
 
-            //TODO fare check se inserisce le righe?
             var entity = companyDto.ToEntity();
             var insertRows = _companyDao.InsertCompany(entity);
 
-            return companyDto;
+            return Tuple.Create(companyDto, insertRows == 1);
 
         }
     }

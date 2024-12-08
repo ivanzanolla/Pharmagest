@@ -5,6 +5,7 @@ using Pharmagest.Interface.Service;
 using Pharmagest.Message.Company;
 using Pharmagest.Model.Company.GetCompanyChainOfResponsability;
 using Pharmagest.Model.Mapping;
+using System;
 
 
 namespace Pharmagest.Model.Company
@@ -21,16 +22,26 @@ namespace Pharmagest.Model.Company
             _observerService = observerService;
             InitChainOfResponsability();
 
-            _observerService.Subscribe(OnSyncCompanyDb, "SyncCompanyDbMessage");
+            _observerService.Subscribe(OnSyncCompanyDbRequest, nameof(SyncCompanyDbRequest));
         }
 
-        private void OnSyncCompanyDb(IBaseMessage message)
+        private void OnSyncCompanyDbRequest(IBaseMessage message)
         {
-            if (message.SystemName.Equals("SyncCompanyDbMessage"))
+            if (!message.SystemName.Equals(nameof(SyncCompanyDbRequest)))
             {
-                var msg = (SyncCompanyDbMessage)message;
-                _handler.Handle(msg.Dto);
+                return;
             }
+
+            if (message is SyncCompanyDbRequest syncCompanyDbRequest)
+            {
+                var result = _handler.Handle(syncCompanyDbRequest.Dto);
+
+                // le tuple nel linguaggio C# 7.0 non possono essere nominate -_- fa schifo usa Item1 ecc ma vabbeh
+                var response = new SyncCompanyDbResponse(syncCompanyDbRequest.Id) { Ok = result.Item2 };
+
+                _observerService.Publish(response);
+            }
+
         }
 
         private void InitChainOfResponsability()
@@ -43,7 +54,7 @@ namespace Pharmagest.Model.Company
             _handler = updateDbHandler;
         }
 
-        public CompanyDto SyncCompanyDb(CompanyDto companyDto)
+        public Tuple<CompanyDto, bool> SyncCompanyDb(CompanyDto companyDto)
         {
             return _handler.Handle(companyDto);
         }

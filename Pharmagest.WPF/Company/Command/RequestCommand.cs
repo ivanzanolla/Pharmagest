@@ -68,9 +68,11 @@ namespace Pharmagest.WPF.Company.Command
             _viewModel.SelectedCompany.CountryCode = companyDto.CountryCode;
             _viewModel.SelectedCompany.Address = companyDto.Address;
 
-            var syncCompanyDbMessage = new SyncCompanyDbMessage { Dto = responseVatDto.Company };
+            var syncCompanyDbMessage = new SyncCompanyDbRequest { Dto = responseVatDto.Company };
 
             _viewModel.ObserverService.Publish(syncCompanyDbMessage);
+
+            _viewModel.PendingSyncCompanyDb.TryAdd(syncCompanyDbMessage.Id, responseVatDto.Company);
 
             _viewModel.IsBusy = false;
 

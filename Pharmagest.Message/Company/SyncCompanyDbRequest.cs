@@ -2,12 +2,12 @@
 
 namespace Pharmagest.Message.Company
 {
-    public class SyncCompanyDbMessage : BaseMessage
+    public class SyncCompanyDbRequest : BaseMessage
     {
 
         public CompanyDto Dto { get; set; }
 
-        public SyncCompanyDbMessage() : base(nameof(SyncCompanyDbMessage))
+        public SyncCompanyDbRequest() : base(nameof(SyncCompanyDbRequest))
         {
         }
     }

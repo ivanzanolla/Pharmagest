@@ -1,4 +1,5 @@
 ﻿using Pharmagest.Dto.Company;
+using System;
 
 namespace Pharmagest.Model.Company.GetCompanyChainOfResponsability
 {
@@ -11,6 +12,6 @@ namespace Pharmagest.Model.Company.GetCompanyChainOfResponsability
             _nextHandler = nextHandler;
         }
 
-        public abstract CompanyDto Handle(CompanyDto companyDto);
+        public abstract Tuple<CompanyDto, bool> Handle(CompanyDto companyDto);
     }
 }

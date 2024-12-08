@@ -1,6 +1,7 @@
 ﻿using Pharmagest.Dto.Company;
 using Pharmagest.Interface.Database.Dao;
 using Pharmagest.Model.Mapping;
+using System;
 
 namespace Pharmagest.Model.Company.GetCompanyChainOfResponsability
 {
@@ -13,7 +14,7 @@ namespace Pharmagest.Model.Company.GetCompanyChainOfResponsability
             _companyDao = companyDao;
         }
 
-        public override CompanyDto Handle(CompanyDto companyDto)
+        public override Tuple<CompanyDto, bool> Handle(CompanyDto companyDto)
         {
 
             if (companyDto == null)
@@ -26,8 +27,7 @@ namespace Pharmagest.Model.Company.GetCompanyChainOfResponsability
             if (_companyDao.IsAlreadySaved(companyDto.CountryCode, companyDto.Vat))
             {
                 var updatedRows = _companyDao.UpdateCompany(entity);
-                return companyDto;
-
+                return Tuple.Create(companyDto, updatedRows == 1);
             }
             else
             {

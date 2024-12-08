@@ -1,10 +1,16 @@
-﻿using Pharmagest.Interface.ObserverManager;
+﻿using Pharmagest.Dto.Company;
+using Pharmagest.Interface.ObserverManager;
 using Pharmagest.Interface.WebClient;
+using Pharmagest.Message.Company;
 using Pharmagest.WPF.Company.Command;
+using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Windows;
 
 namespace Pharmagest.WPF.Company.ViewModel
 {
@@ -17,6 +23,9 @@ namespace Pharmagest.WPF.Company.ViewModel
         internal IWebClientContext WebClientContext => _webClientContext;
         internal IObserverService ObserverService => _observerService;
 
+        internal ConcurrentDictionary<string, CompanyDto> PendingSyncCompanyDb;
+
+
         public RequestCommand RequestCmd { get; set; }
 
         public CompanyViewModel SelectedCompany { get; set; }
@@ -27,6 +36,7 @@ namespace Pharmagest.WPF.Company.ViewModel
 
         public UserControlViewModel(IWebClientContext webClientContext, IObserverService observerService)
         {
+            PendingSyncCompanyDb = new ConcurrentDictionary<string, CompanyDto>();
             SelectedCompany = new CompanyViewModel();
             CurrentView = this;
             RequestCmd = new RequestCommand(this);
@@ -34,6 +44,36 @@ namespace Pharmagest.WPF.Company.ViewModel
             Countries = new ObservableCollection<CountryViewModel>(countries);
             _webClientContext = webClientContext;
             _observerService = observerService;
+
+
+            ObserverService.Subscribe(OnSyncCompanyDbResponse, nameof(SyncCompanyDbResponse));
+        }
+
+        private void OnSyncCompanyDbResponse(IBaseMessage message)
+        {
+            if (!message.SystemName.Equals(nameof(SyncCompanyDbResponse)))
+            {
+                return;
+            }
+
+            if (message is SyncCompanyDbResponse syncCompanyDbResponse)
+            {
+                if (syncCompanyDbResponse.Ok)
+                {
+                    PendingSyncCompanyDb.TryRemove(syncCompanyDbResponse.Id, out _);
+                }
+                else
+                {
+                    PendingSyncCompanyDb.TryGetValue(syncCompanyDbResponse.Id, out CompanyDto companyDto);
+
+                    if (companyDto == null)
+                    {
+                        return;
+                    }
+                    var messageBoxStr = $"{companyDto.Name} / CountryCode: {companyDto.CountryCode} / Vat: {companyDto.Vat}";
+                    MessageBox.Show($"Unable to save {messageBoxStr}", "Save error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         #region Properties

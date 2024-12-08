@@ -42,7 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseMessage.cs" />
-    <Compile Include="Company\SyncCompanyDbMessage.cs" />
+    <Compile Include="Company\SyncCompanyDbRequest.cs" />
+    <Compile Include="Company\SyncCompanyDbResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
