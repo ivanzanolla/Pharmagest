@@ -14,7 +14,7 @@ namespace Pharmagest.WebClient.Rest
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl = @"https://ec.europa.eu/taxation_customs/vies/rest-api/";
 
-        public override string Name => nameof(RestJsonVatService);
+        public override string Name => "rest";
 
         public RestJsonVatService()
         {
@@ -38,14 +38,38 @@ namespace Pharmagest.WebClient.Rest
                 VatNumber = requestVatDto.Vat,
             };
 
+            var companyTask = GetCompanyResponseAsync(vatNumberRequest);
+            var delayTask = Task.Delay(10000);
+
+            var completedTask = await Task.WhenAny(companyTask, delayTask);
+
+            if (completedTask == delayTask)
+            {
+                return new ResponseVatDto
+                {
+                    IsValid = false,
+                    ErrorMessage = "Request timed out",
+                    Company = null
+                };
+            }
+
+            return await companyTask;
+        }
+
+        private async Task<ResponseVatDto> GetCompanyResponseAsync(VatNumberRequest vatNumberRequest)
+        {
             try
             {
                 var vatNumberResponse = await CheckVatNumberAsync(vatNumberRequest);
 
                 if (!vatNumberResponse.IsValid)
                 {
-                    return new ResponseVatDto { IsValid = false, ErrorMessage = "Not valid" };
-
+                    return new ResponseVatDto
+                    {
+                        IsValid = false,
+                        ErrorMessage = "Not valid",
+                        Company = null
+                    };
                 }
 
                 var companyDto = new CompanyDto
@@ -57,26 +81,22 @@ namespace Pharmagest.WebClient.Rest
                     Vat = vatNumberResponse.VatNumber
                 };
 
-                var responseVatDto = new ResponseVatDto
+                return new ResponseVatDto
                 {
                     Company = companyDto,
                     IsValid = true,
                     ErrorMessage = string.Empty
                 };
-
-                return responseVatDto;
             }
             catch (Exception ex)
             {
-
                 return new ResponseVatDto
                 {
                     IsValid = false,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = ex.Message,
+                    Company = null
                 };
             }
-
-    
         }
 
 

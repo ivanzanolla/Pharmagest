@@ -7,28 +7,42 @@ using System.Windows.Input;
 
 namespace Pharmagest.WPF.Company.Command
 {
-    public class RequestSoapCommand : ICommand
+    public class RequestCommand : ICommand
     {
         private readonly UserControlViewModel _viewModel;
 
         public event EventHandler CanExecuteChanged;
 
 
-        public RequestSoapCommand(UserControlViewModel viewModel)
+        public RequestCommand(UserControlViewModel viewModel)
         {
             _viewModel = viewModel;
+
+            _viewModel.PropertyChanged += _viewModel_PropertyChanged;
+        }
+
+        private void _viewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("IsBusy"))
+            {
+                CanExecuteChanged?.Invoke(this, new EventArgs());
+            }
         }
 
         public bool CanExecute(object parameter)
         {
-            return true;
+            return !_viewModel.IsBusy;
         }
 
         public async void Execute(object parameter)
         {
+            _viewModel.IsBusy = true;
+
+            var strategy = parameter.ToString();
+
             var requestDto = new RequestVatDto { CountryCode = _viewModel.SelectedCountryCode, Vat = _viewModel.Vat };
 
-            var responseVatDto = await _viewModel.WebClientContext.ExecuteStrategyAsync("WebSoapVatService", requestDto);
+            var responseVatDto = await _viewModel.WebClientContext.ExecuteStrategyAsync(strategy, requestDto);
 
 
             if (!responseVatDto.IsValid)
@@ -38,6 +52,7 @@ namespace Pharmagest.WPF.Company.Command
                 _viewModel.SelectedCompany.Name = responseVatDto.ErrorMessage;
                 _viewModel.SelectedCompany.CountryCode = string.Empty;
                 _viewModel.SelectedCompany.Address = responseVatDto.ErrorMessage;
+                _viewModel.IsBusy = false;
                 return;
             }
 
@@ -49,13 +64,16 @@ namespace Pharmagest.WPF.Company.Command
             _viewModel.SelectedCompany.CountryCode = companyDto.CountryCode;
             _viewModel.SelectedCompany.Address = companyDto.Address;
 
-
-
             var syncCompanyDbMessage = new SyncCompanyDbMessage { Dto = responseVatDto.Company };
 
             _viewModel.ObserverService.Publish(syncCompanyDbMessage);
+
+            _viewModel.IsBusy = false;
+
         }
 
+
+      
     }
 
 

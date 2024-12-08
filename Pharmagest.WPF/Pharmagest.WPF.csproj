@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseViewModel.cs" />
-    <Compile Include="Company\Command\RequestSoapCommand.cs" />
+    <Compile Include="Company\Command\RequestCommand.cs" />
     <Compile Include="Company\Mapping\ViewModelMapping.cs" />
     <Compile Include="Company\ViewModel\CompanyViewModel.cs" />
     <Compile Include="Company\ViewModel\CountryViewModel.cs" />

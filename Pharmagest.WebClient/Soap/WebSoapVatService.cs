@@ -7,7 +7,7 @@ namespace Pharmagest.WebClient.Soap
 {
     public class WebSoapVatService : BaseVatWebClient
     {
-        public override string Name => nameof(WebSoapVatService);
+        public override string Name => "soap";
 
         private static readonly BasicHttpBinding _binding = new BasicHttpBinding();
         private static readonly EndpointAddress _endpoint = new EndpointAddress("http://ec.europa.eu/taxation_customs/vies/services/checkVatService");
@@ -23,6 +23,27 @@ namespace Pharmagest.WebClient.Soap
             var countryCode = requestVatDto.CountryCode;
             var vatNumber = requestVatDto.Vat;
 
+            var companyTask = GetCompanyResponseAsync(client, countryCode, vatNumber);
+            var delayTask = Task.Delay(10000);
+
+            var completedTask = await Task.WhenAny(companyTask, delayTask);
+
+            if (completedTask == delayTask)
+            {
+                return new ResponseVatDto
+                {
+                    IsValid = false,
+                    ErrorMessage = "Request timed out",
+                    Company = null
+                };
+            }
+
+            // Se il task principale è completato, ritorna il risultato
+            return await companyTask;
+        }
+
+        private async Task<ResponseVatDto> GetCompanyResponseAsync(SoapVatService.checkVatPortTypeClient client, string countryCode, string vatNumber)
+        {
             try
             {
                 var checkVatResponse = await client.checkVatAsync(countryCode, vatNumber);
@@ -33,7 +54,8 @@ namespace Pharmagest.WebClient.Soap
                     return new ResponseVatDto
                     {
                         IsValid = false,
-                        ErrorMessage = "Not valid"
+                        ErrorMessage = "Not valid",
+                        Company = null
                     };
                 }
 
@@ -57,17 +79,14 @@ namespace Pharmagest.WebClient.Soap
             }
             catch (Exception ex)
             {
-
                 return new ResponseVatDto
                 {
                     IsValid = false,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = ex.Message,
+                    Company = null
                 };
             }
-
-
-
-
         }
+
     }
 }

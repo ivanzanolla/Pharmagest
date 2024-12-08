@@ -25,7 +25,8 @@
                 <TextBlock Text="Enter VAT:" Margin="0,20,0,5" />
                 <TextBox Text="{Binding Vat}" />
 
-                <Button Content="Execute" Margin="0,20,0,0" Command="{Binding RequestSoapCmd}" />
+                <Button Content="Execute SOAP" Margin="0,20,0,0" Command="{Binding RequestCmd}" CommandParameter="soap" />
+                <Button Content="Execute Rest/json" Margin="0,20,0,0" Command="{Binding RequestCmd}" CommandParameter="rest" />
             </StackPanel>
 
             <!-- Parte destra -->

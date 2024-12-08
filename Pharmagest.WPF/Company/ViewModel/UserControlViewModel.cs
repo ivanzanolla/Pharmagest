@@ -17,7 +17,7 @@ namespace Pharmagest.WPF.Company.ViewModel
         internal IWebClientContext WebClientContext => _webClientContext;
         internal IObserverService ObserverService => _observerService;
 
-        public RequestSoapCommand RequestSoapCmd { get; set; }
+        public RequestCommand RequestCmd { get; set; }
 
         public CompanyViewModel SelectedCompany { get; set; }
 
@@ -29,7 +29,7 @@ namespace Pharmagest.WPF.Company.ViewModel
         {
             SelectedCompany = new CompanyViewModel();
             CurrentView = this;
-            RequestSoapCmd = new RequestSoapCommand(this);
+            RequestCmd = new RequestCommand(this);
             var countries = GetEuropeanUnionCountries();
             Countries = new ObservableCollection<CountryViewModel>(countries);
             _webClientContext = webClientContext;
@@ -62,6 +62,22 @@ namespace Pharmagest.WPF.Company.ViewModel
                 if (_vat != value)
                 {
                     _vat = value.Trim();
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private bool _isBusy;
+
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
                     OnPropertyChanged();
                 }
             }
