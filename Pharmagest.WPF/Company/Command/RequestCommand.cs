@@ -50,7 +50,7 @@ namespace Pharmagest.WPF.Company.Command
                 _viewModel.SelectedCompany.RequestTime = responseVatDto.ErrorMessage;
                 _viewModel.SelectedCompany.Vat = responseVatDto.ErrorMessage;
                 _viewModel.SelectedCompany.Name = responseVatDto.ErrorMessage;
-                _viewModel.SelectedCompany.CountryCode = string.Empty;
+                _viewModel.SelectedCompany.CountryCode = responseVatDto.ErrorMessage;
                 _viewModel.SelectedCompany.Address = responseVatDto.ErrorMessage;
                 _viewModel.IsBusy = false;
                 return;
@@ -73,7 +73,7 @@ namespace Pharmagest.WPF.Company.Command
         }
 
 
-      
+
     }
 
 
