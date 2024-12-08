@@ -1,6 +1,6 @@
 # Pharmagest
 
-Focused to a scalable solution designed to add future enhancements (new services and views). I prioritized architectural design over error handling and exception management.
+Focused to a scalable solution designed to add future enhancements (new services and views) and modularity.
 
 One significant limitation is .NET Framework 4.6, which restricts compatibility with some NuGet packages and deprecated components. Instead, I preferred to built some feautures from scratch and use pure WPF without any third party package.
 
