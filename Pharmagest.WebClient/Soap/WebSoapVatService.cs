@@ -1,6 +1,7 @@
 ﻿using Pharmagest.Dto.Company;
 using System;
 using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace Pharmagest.WebClient.Soap
 {
@@ -11,7 +12,7 @@ namespace Pharmagest.WebClient.Soap
         private static readonly BasicHttpBinding _binding = new BasicHttpBinding();
         private static readonly EndpointAddress _endpoint = new EndpointAddress("http://ec.europa.eu/taxation_customs/vies/services/checkVatService");
 
-        public override CompanyDto GetCompany(RequestVatDto requestVatDto)
+        public override async Task<ResponseVatDto> GetCompanyAsync(RequestVatDto requestVatDto)
         {
             if (requestVatDto.CountryCode == null)
                 throw new ArgumentNullException(nameof(requestVatDto.CountryCode));
@@ -24,35 +25,48 @@ namespace Pharmagest.WebClient.Soap
 
             try
             {
-                var requestDateString = client.checkVat(ref countryCode, ref vatNumber, out bool valid, out string name, out string address);
+                var checkVatResponse = await client.checkVatAsync(countryCode, vatNumber);
+                var body = checkVatResponse.Body;
 
-                if (!valid)
+                if (!body.valid)
                 {
-                    return null;
-                }
-                var requestTime = DateTime.Parse(requestDateString);
-
-                if (valid)
-                {
-                    return new CompanyDto
+                    return new ResponseVatDto
                     {
-                        Address = address,
-                        CountryCode = countryCode,
-                        Vat = vatNumber,
-                        Name = name,
-                        RequestTime = requestTime,
+                        IsValid = false,
+                        ErrorMessage = "Not valid"
                     };
                 }
+
+                var validRequestDateTime = DateTime.TryParse(body.requestDate, out DateTime requestTime);
+
+                var companyDto = new CompanyDto
+                {
+                    Address = body.address,
+                    CountryCode = body.countryCode,
+                    Vat = body.vatNumber,
+                    Name = body.name,
+                    RequestTime = validRequestDateTime ? requestTime : DateTime.UtcNow,
+                };
+
+                return new ResponseVatDto
+                {
+                    Company = companyDto,
+                    IsValid = true,
+                    ErrorMessage = string.Empty
+                };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                return null;
+                return new ResponseVatDto
+                {
+                    IsValid = false,
+                    ErrorMessage = ex.Message
+                };
             }
 
 
 
-            return null;
 
         }
     }

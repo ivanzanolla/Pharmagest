@@ -3,6 +3,7 @@ using Pharmagest.Interface.WebClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Pharmagest.WebClient
 {
@@ -15,10 +16,10 @@ namespace Pharmagest.WebClient
             _strategies = strategies;
         }
 
-        public CompanyDto ExecuteStrategy(string engineName, RequestVatDto requestVatDto)
+        public Task<ResponseVatDto> ExecuteStrategyAsync(string engineName, RequestVatDto requestVatDto)
         {
             var instance = _strategies.FirstOrDefault(x => x.Name.Equals(engineName, StringComparison.InvariantCultureIgnoreCase));
-            return instance.GetCompany(requestVatDto);
+            return instance.GetCompanyAsync(requestVatDto);
         }
 
 

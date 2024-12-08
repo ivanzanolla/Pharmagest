@@ -25,7 +25,7 @@ namespace Pharmagest.WebClient.Rest
             };
         }
 
-        public override CompanyDto GetCompany(RequestVatDto requestVatDto)
+        public override async Task<ResponseVatDto> GetCompanyAsync(RequestVatDto requestVatDto)
         {
             if (requestVatDto.CountryCode == null)
                 throw new ArgumentNullException(nameof(requestVatDto.CountryCode));
@@ -38,24 +38,51 @@ namespace Pharmagest.WebClient.Rest
                 VatNumber = requestVatDto.Vat,
             };
 
-            var response = CheckVatNumber(vatNumberRequest).GetAwaiter().GetResult();
-
-            var dto = new CompanyDto
+            try
             {
-                Address = response.Address,
-                CountryCode = response.CountryCode,
-                Name = response.Name,
-                RequestTime = response.RequestDate ?? DateTime.Now,
-                Vat = response.VatNumber
-            };
+                var vatNumberResponse = await CheckVatNumberAsync(vatNumberRequest);
 
-            return dto;
+                if (!vatNumberResponse.IsValid)
+                {
+                    return new ResponseVatDto { IsValid = false, ErrorMessage = "Not valid" };
+
+                }
+
+                var companyDto = new CompanyDto
+                {
+                    Address = vatNumberResponse.Address,
+                    CountryCode = vatNumberResponse.CountryCode,
+                    Name = vatNumberResponse.Name,
+                    RequestTime = vatNumberResponse.RequestDate ?? DateTime.Now,
+                    Vat = vatNumberResponse.VatNumber
+                };
+
+                var responseVatDto = new ResponseVatDto
+                {
+                    Company = companyDto,
+                    IsValid = true,
+                    ErrorMessage = string.Empty
+                };
+
+                return responseVatDto;
+            }
+            catch (Exception ex)
+            {
+
+                return new ResponseVatDto
+                {
+                    IsValid = false,
+                    ErrorMessage = ex.Message
+                };
+            }
+
+    
         }
 
 
 
 
-        private async Task<VatNumberResponse> CheckVatNumber(VatNumberRequest body)
+        private async Task<VatNumberResponse> CheckVatNumberAsync(VatNumberRequest body)
         {
             string requestUri = "check-vat-number";
             var json = JsonConvert.SerializeObject(body);
@@ -64,7 +91,7 @@ namespace Pharmagest.WebClient.Rest
             return await ParseContent<VatNumberResponse>(message);
         }
 
-        private async Task<VatNumberResponse> CheckVatTestService(VatNumberRequest body)
+        private async Task<VatNumberResponse> CheckVatTestServiceAsync(VatNumberRequest body)
         {
             string requestUri = "check-vat-test-service";
             var json = JsonConvert.SerializeObject(body);
@@ -74,7 +101,7 @@ namespace Pharmagest.WebClient.Rest
         }
 
 
-        private async Task<StatusResponse> CheckStatus()
+        private async Task<StatusResponse> CheckStatusAsync()
         {
             string requestUri = "check-status";
             HttpResponseMessage message = await _httpClient.GetAsync(requestUri);

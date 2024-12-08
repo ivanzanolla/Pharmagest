@@ -1,5 +1,6 @@
 ﻿using Pharmagest.Dto.Company;
 using Pharmagest.Interface.WebClient;
+using System.Threading.Tasks;
 
 namespace Pharmagest.WebClient
 {
@@ -7,7 +8,7 @@ namespace Pharmagest.WebClient
     {
 
         public abstract string Name { get; }
-        public abstract CompanyDto GetCompany(RequestVatDto requestVatDto);
+        public abstract Task<ResponseVatDto> GetCompanyAsync(RequestVatDto requestVatDto);
 
     }
 }

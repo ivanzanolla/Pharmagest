@@ -24,31 +24,34 @@ namespace Pharmagest.WPF.Company.Command
             return true;
         }
 
-        public void Execute(object parameter)
+        public async void Execute(object parameter)
         {
             var requestDto = new RequestVatDto { CountryCode = _viewModel.SelectedCountryCode, Vat = _viewModel.Vat };
 
-            var dto = _viewModel.WebClientContext.ExecuteStrategy("WebSoapVatService", requestDto);
+            var responseVatDto = await _viewModel.WebClientContext.ExecuteStrategyAsync("WebSoapVatService", requestDto);
 
-            if (dto == null)
+
+            if (!responseVatDto.IsValid)
             {
-                _viewModel.SelectedCompany.RequestTime = string.Empty;
-                _viewModel.SelectedCompany.Vat = string.Empty;
-                _viewModel.SelectedCompany.Name = string.Empty;
+                _viewModel.SelectedCompany.RequestTime = responseVatDto.ErrorMessage;
+                _viewModel.SelectedCompany.Vat = responseVatDto.ErrorMessage;
+                _viewModel.SelectedCompany.Name = responseVatDto.ErrorMessage;
                 _viewModel.SelectedCompany.CountryCode = string.Empty;
-                _viewModel.SelectedCompany.Address = string.Empty;
-                //TODO mettere errore
+                _viewModel.SelectedCompany.Address = responseVatDto.ErrorMessage;
                 return;
             }
-            _viewModel.SelectedCompany.RequestTime = dto.RequestTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-            _viewModel.SelectedCompany.Vat = dto.Vat;
-            _viewModel.SelectedCompany.Name = dto.Name;
-            _viewModel.SelectedCompany.CountryCode = dto.CountryCode;
-            _viewModel.SelectedCompany.Address = dto.Address;
+
+            var companyDto = responseVatDto.Company;
+
+            _viewModel.SelectedCompany.RequestTime = companyDto.RequestTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            _viewModel.SelectedCompany.Vat = companyDto.Vat;
+            _viewModel.SelectedCompany.Name = companyDto.Name;
+            _viewModel.SelectedCompany.CountryCode = companyDto.CountryCode;
+            _viewModel.SelectedCompany.Address = companyDto.Address;
 
 
 
-            var syncCompanyDbMessage = new SyncCompanyDbMessage { Dto = dto };
+            var syncCompanyDbMessage = new SyncCompanyDbMessage { Dto = responseVatDto.Company };
 
             _viewModel.ObserverService.Publish(syncCompanyDbMessage);
         }

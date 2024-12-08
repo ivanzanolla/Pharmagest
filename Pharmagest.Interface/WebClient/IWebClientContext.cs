@@ -1,9 +1,10 @@
 ﻿using Pharmagest.Dto.Company;
+using System.Threading.Tasks;
 
 namespace Pharmagest.Interface.WebClient
 {
     public interface IWebClientContext
     {
-        CompanyDto ExecuteStrategy(string engineName, RequestVatDto requestVatDto);
+        Task<ResponseVatDto> ExecuteStrategyAsync(string engineName, RequestVatDto requestVatDto);
     }
 }
