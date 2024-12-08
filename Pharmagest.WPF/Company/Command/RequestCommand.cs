@@ -2,7 +2,9 @@
 using Pharmagest.Message.Company;
 using Pharmagest.WPF.Company.ViewModel;
 using System;
+using System.ComponentModel;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Pharmagest.WPF.Company.Command
@@ -18,16 +20,18 @@ namespace Pharmagest.WPF.Company.Command
         {
             _viewModel = viewModel;
 
-            _viewModel.PropertyChanged += _viewModel_PropertyChanged;
+            WeakEventManager<UserControlViewModel, PropertyChangedEventArgs>
+             .AddHandler(_viewModel, nameof(_viewModel.PropertyChanged), OnViewModelPropertyChanged);
         }
 
-        private void _viewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals("IsBusy"))
             {
-                CanExecuteChanged?.Invoke(this, new EventArgs());
+                CanExecuteChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
 
         public bool CanExecute(object parameter)
         {
